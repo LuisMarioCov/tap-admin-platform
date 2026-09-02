@@ -1,0 +1,37 @@
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <p class="eyebrow">TAP Terminal</p>
+      <h1>Panel admin</h1>
+    </div>
+
+    <nav aria-label="Secciones permitidas">
+      <a
+        routerLink="/inicio"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        Inicio
+      </a>
+
+      @for (item of navItems(); track item.section) {
+        <a [routerLink]="item.route" routerLinkActive="active">
+          {{ item.label }}
+        </a>
+      }
+    </nav>
+
+    @if (user(); as currentUser) {
+      <div class="user-card">
+        <p class="user-name">{{ currentUser.name }}</p>
+        <p class="user-meta">{{ currentUser.email }}</p>
+        <p class="user-meta">Código: {{ currentUser.code }}</p>
+        <button type="button" (click)="logout()">Cerrar sesión</button>
+      </div>
+    }
+  </aside>
+
+  <main class="content">
+    <router-outlet />
+  </main>
+</div>

@@ -1,0 +1,115 @@
+<section class="profiles-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Módulo</p>
+      <h1>Perfiles</h1>
+      <p class="subtitle">Define qué secciones puede usar cada rol del sistema.</p>
+    </div>
+
+    <div class="header-actions">
+      <button type="button" class="secondary" (click)="export('pdf')" [disabled]="exporting() !== null">
+        {{ exporting() === 'pdf' ? 'Exportando…' : 'Exportar PDF' }}
+      </button>
+      <button type="button" class="secondary" (click)="export('xlsx')" [disabled]="exporting() !== null">
+        {{ exporting() === 'xlsx' ? 'Exportando…' : 'Exportar Excel (.xlsx)' }}
+      </button>
+    </div>
+  </header>
+
+  @if (errorMessage()) {
+    <div class="alert error" role="alert">{{ errorMessage() }}</div>
+  }
+
+  @if (successMessage()) {
+    <div class="alert success" role="status">{{ successMessage() }}</div>
+  }
+
+  <div class="layout">
+    <article class="panel form-panel">
+      <div class="panel-header">
+        <h2>{{ editingProfile() ? 'Editar perfil' : 'Nuevo perfil' }}</h2>
+        @if (editingProfile()) {
+          <button type="button" class="link" (click)="startCreate()">Cancelar edición</button>
+        }
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <label>
+          Nombre del perfil
+          <input type="text" formControlName="name" />
+          @if (form.controls.name.touched && form.controls.name.hasError('required')) {
+            <span class="field-error">El nombre es obligatorio.</span>
+          }
+        </label>
+
+        <fieldset class="sections-fieldset">
+          <legend>Secciones permitidas</legend>
+          @for (option of sectionOptions; track option.key) {
+            <label class="checkbox-row">
+              <input type="checkbox" [formControlName]="option.key" />
+              {{ option.label }}
+            </label>
+          }
+        </fieldset>
+
+        <button type="submit" [disabled]="saving()">
+          {{ saving() ? 'Guardando…' : (editingProfile() ? 'Actualizar' : 'Crear perfil') }}
+        </button>
+      </form>
+    </article>
+
+    <article class="panel table-panel">
+      <div class="panel-header">
+        <h2>Listado</h2>
+        <p>{{ total() }} perfil(es)</p>
+      </div>
+
+      @if (loading()) {
+        <p class="muted">Cargando perfiles…</p>
+      } @else if (profiles().length === 0) {
+        <p class="muted">No hay perfiles registrados todavía.</p>
+      } @else {
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Secciones</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (profile of profiles(); track profile.id) {
+                <tr>
+                  <td>{{ profile.code }}</td>
+                  <td>{{ profile.name }}</td>
+                  <td>{{ formatSections(profile.section_keys) }}</td>
+                  <td class="actions">
+                    <button type="button" class="link" (click)="startEdit(profile)">Editar</button>
+                    <button type="button" class="link danger" (click)="remove(profile)">Eliminar</button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="pagination">
+          <button type="button" class="secondary" (click)="goToPage(currentPage() - 1)" [disabled]="currentPage() <= 1">
+            Anterior
+          </button>
+          <span>Página {{ currentPage() }} de {{ lastPage() }}</span>
+          <button
+            type="button"
+            class="secondary"
+            (click)="goToPage(currentPage() + 1)"
+            [disabled]="currentPage() >= lastPage()"
+          >
+            Siguiente
+          </button>
+        </div>
+      }
+    </article>
+  </div>
+</section>

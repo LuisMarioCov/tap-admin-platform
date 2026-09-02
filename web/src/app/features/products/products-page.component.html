@@ -1,0 +1,123 @@
+<section class="products-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Módulo</p>
+      <h1>Productos</h1>
+      <p class="subtitle">Alta, edición, eliminación y exportación contra la API Laravel.</p>
+    </div>
+
+    <div class="header-actions">
+      <button type="button" class="secondary" (click)="export('pdf')" [disabled]="exporting() !== null">
+        {{ exporting() === 'pdf' ? 'Exportando…' : 'Exportar PDF' }}
+      </button>
+      <button type="button" class="secondary" (click)="export('xlsx')" [disabled]="exporting() !== null">
+        {{ exporting() === 'xlsx' ? 'Exportando…' : 'Exportar Excel (.xlsx)' }}
+      </button>
+    </div>
+  </header>
+
+  @if (errorMessage()) {
+    <div class="alert error" role="alert">{{ errorMessage() }}</div>
+  }
+
+  @if (successMessage()) {
+    <div class="alert success" role="status">{{ successMessage() }}</div>
+  }
+
+  <div class="layout">
+    <article class="panel form-panel">
+      <div class="panel-header">
+        <h2>{{ editingProduct() ? 'Editar producto' : 'Nuevo producto' }}</h2>
+        @if (editingProduct()) {
+          <button type="button" class="link" (click)="startCreate()">Cancelar edición</button>
+        }
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <label>
+          Nombre
+          <input type="text" formControlName="name" />
+          @if (form.controls.name.touched && form.controls.name.hasError('required')) {
+            <span class="field-error">El nombre es obligatorio.</span>
+          }
+        </label>
+
+        <label>
+          Marca
+          <input type="text" formControlName="brand" />
+          @if (form.controls.brand.touched && form.controls.brand.hasError('required')) {
+            <span class="field-error">La marca es obligatoria.</span>
+          }
+        </label>
+
+        <label>
+          Precio (1–999)
+          <input type="number" formControlName="price" min="1" max="999" />
+          @if (form.controls.price.touched && form.controls.price.invalid) {
+            <span class="field-error">El precio debe ser un entero entre 1 y 999.</span>
+          }
+        </label>
+
+        <button type="submit" [disabled]="saving()">
+          {{ saving() ? 'Guardando…' : (editingProduct() ? 'Actualizar' : 'Crear producto') }}
+        </button>
+      </form>
+    </article>
+
+    <article class="panel table-panel">
+      <div class="panel-header">
+        <h2>Listado</h2>
+        <p>{{ total() }} producto(s)</p>
+      </div>
+
+      @if (loading()) {
+        <p class="muted">Cargando productos…</p>
+      } @else if (products().length === 0) {
+        <p class="muted">No hay productos registrados todavía.</p>
+      } @else {
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Marca</th>
+                <th>Precio</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (product of products(); track product.id) {
+                <tr>
+                  <td>{{ product.code }}</td>
+                  <td>{{ product.name }}</td>
+                  <td>{{ product.brand }}</td>
+                  <td>{{ product.price }}</td>
+                  <td class="actions">
+                    <button type="button" class="link" (click)="startEdit(product)">Editar</button>
+                    <button type="button" class="link danger" (click)="remove(product)">Eliminar</button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="pagination">
+          <button type="button" class="secondary" (click)="goToPage(currentPage() - 1)" [disabled]="currentPage() <= 1">
+            Anterior
+          </button>
+          <span>Página {{ currentPage() }} de {{ lastPage() }}</span>
+          <button
+            type="button"
+            class="secondary"
+            (click)="goToPage(currentPage() + 1)"
+            [disabled]="currentPage() >= lastPage()"
+          >
+            Siguiente
+          </button>
+        </div>
+      }
+    </article>
+  </div>
+</section>

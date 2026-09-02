@@ -1,0 +1,26 @@
+@if (user(); as currentUser) {
+  <section class="home">
+    <header>
+      <p class="eyebrow">Bienvenido</p>
+      <h1>Hola, {{ currentUser.name }}</h1>
+      <p class="subtitle">
+        El menú lateral solo muestra las secciones de tu ficha:
+        <strong>{{ currentUser.allowed_sections.join(', ') }}</strong>
+      </p>
+    </header>
+
+    <div class="cards">
+      @for (item of shortcuts(); track item.section) {
+        <a class="card" [routerLink]="item.route">
+          <h2>{{ item.label }}</h2>
+          <p>{{ item.description }}</p>
+        </a>
+      } @empty {
+        <article class="card muted">
+          <h2>Sin secciones</h2>
+          <p>Tu usuario no tiene módulos asignados. Contacta a un administrador.</p>
+        </article>
+      }
+    </div>
+  </section>
+}

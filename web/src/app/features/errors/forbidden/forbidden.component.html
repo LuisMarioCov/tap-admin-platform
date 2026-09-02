@@ -1,0 +1,16 @@
+<section class="state-page">
+  <div class="state-card">
+    <p class="code">403</p>
+    <h1>Acceso no permitido</h1>
+    <p>
+      Tu gafete es válido, pero no tienes clearance para esta sección.
+    </p>
+    @if (user(); as currentUser) {
+      <p class="meta">
+        Sesión: <strong>{{ currentUser.name }}</strong> —
+        Secciones: {{ currentUser.allowed_sections.join(', ') || 'ninguna' }}
+      </p>
+    }
+    <a routerLink="/inicio">Volver al inicio</a>
+  </div>
+</section>

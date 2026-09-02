@@ -1,0 +1,30 @@
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log
+
+# Secrets (nunca subir)
+**/.env
+!**/.env.example
+
+# API Laravel
+api/vendor/
+api/node_modules/
+api/.phpunit.cache
+api/.phpunit.result.cache
+api/public/build
+api/public/hot
+api/public/storage
+api/storage/*.key
+api/storage/pail
+api/storage/app/test-*
+
+# Web Angular
+web/node_modules/
+web/dist/
+web/.angular/
+web/coverage/
+web/tmp/
+web/out-tsc/

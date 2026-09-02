@@ -1,0 +1,39 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.state-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+}
+
+.state-card {
+  width: min(100%, 480px);
+  padding: 2rem;
+  border-radius: 1rem;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  text-align: center;
+}
+
+.code {
+  margin: 0;
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+.meta {
+  color: var(--muted);
+}
+
+a {
+  display: inline-block;
+  margin-top: 1rem;
+  color: var(--accent);
+  font-weight: 700;
+  text-decoration: none;
+}
