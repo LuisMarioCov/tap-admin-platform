@@ -2,16 +2,19 @@
 
 namespace App\Services;
 
-use App\Mail\PasswordResetMail;
 use App\Models\PasswordResetToken;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class PasswordResetService
 {
+    /**
+     * Sends reset mail via Resend HTTPS API (Render free blocks SMTP ports).
+     */
     public function sendResetLink(string $email): void
     {
         $user = User::query()->where('email', $email)->first();
@@ -20,8 +23,12 @@ class PasswordResetService
             return;
         }
 
-        if (app()->environment('production') && config('mail.default') === 'log') {
-            throw new \RuntimeException('El envío de correo no está configurado en el servidor.');
+        $apiKey = (string) config('services.resend.key');
+
+        if ($apiKey === '') {
+            throw ValidationException::withMessages([
+                'email' => ['Falta RESEND_KEY en Render. Sin eso no se puede enviar el correo.'],
+            ]);
         }
 
         $plainToken = Str::random(64);
@@ -39,12 +46,41 @@ class PasswordResetService
             .'/auth/reset-password?token='.urlencode($plainToken)
             .'&email='.urlencode($email);
 
-        Mail::to($email)->send(new PasswordResetMail(
-            userName: (string) $user->name,
-            resetUrl: $resetUrl,
-        ));
+        $fromAddress = (string) config('mail.from.address', 'onboarding@resend.dev');
+        $fromName = (string) config('mail.from.name', 'TAP Admin');
+        $html = view('emails.password-reset', [
+            'userName' => (string) $user->name,
+            'resetUrl' => $resetUrl,
+        ])->render();
 
-        Log::info('Password reset email sent.', ['email' => $email]);
+        $response = Http::withToken($apiKey)
+            ->acceptJson()
+            ->timeout(20)
+            ->post('https://api.resend.com/emails', [
+                'from' => "{$fromName} <{$fromAddress}>",
+                'to' => [$email],
+                'subject' => 'TAP Admin — ¿Quieres cambiar tu contraseña?',
+                'html' => $html,
+            ]);
+
+        if (! $response->successful()) {
+            Log::error('Resend API rejected password reset mail.', [
+                'email' => $email,
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+
+            throw ValidationException::withMessages([
+                'email' => [
+                    'No se pudo enviar el correo (Resend). '.$this->summarizeResendError($response->body()),
+                ],
+            ]);
+        }
+
+        Log::info('Password reset email sent via Resend.', [
+            'email' => $email,
+            'id' => $response->json('id'),
+        ]);
     }
 
     public function resetPassword(string $email, string $token, string $password): bool
@@ -74,5 +110,16 @@ class PasswordResetService
         PasswordResetToken::query()->where('email', $email)->delete();
 
         return true;
+    }
+
+    private function summarizeResendError(string $body): string
+    {
+        $decoded = json_decode($body, true);
+
+        if (is_array($decoded) && isset($decoded['message']) && is_string($decoded['message'])) {
+            return $decoded['message'];
+        }
+
+        return 'Revisa RESEND_KEY y que MAIL_FROM_ADDRESS sea onboarding@resend.dev.';
     }
 }

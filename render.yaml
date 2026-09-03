@@ -25,21 +25,11 @@ services:
       - key: LOG_CHANNEL
         value: stderr
       - key: MAIL_MAILER
-        sync: false
-      - key: MAIL_HOST
-        sync: false
-      - key: MAIL_PORT
-        sync: false
-      - key: MAIL_USERNAME
-        sync: false
-      - key: MAIL_PASSWORD
-        sync: false
-      - key: MAIL_ENCRYPTION
-        sync: false
-      - key: MAIL_SCHEME
+        value: resend
+      - key: RESEND_KEY
         sync: false
       - key: MAIL_FROM_ADDRESS
-        value: noreply@tap.local
+        value: onboarding@resend.dev
       - key: MAIL_FROM_NAME
         value: TAP Admin
       - key: MONGODB_URI
