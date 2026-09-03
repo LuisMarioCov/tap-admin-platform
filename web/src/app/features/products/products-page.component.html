@@ -39,6 +39,7 @@
         <div class="mb-3">
           <label class="form-label">Nombre</label>
           <input type="text" class="form-control" formControlName="name" />
+          <div class="form-hint">Obligatorio. Máximo 120 caracteres.</div>
           @if (form.controls.name.touched && form.controls.name.hasError('required')) {
             <div class="invalid-feedback d-block">El nombre es obligatorio.</div>
           }
@@ -46,13 +47,15 @@
         <div class="mb-3">
           <label class="form-label">Marca</label>
           <input type="text" class="form-control" formControlName="brand" />
+          <div class="form-hint">Obligatoria. Máximo 120 caracteres.</div>
           @if (form.controls.brand.touched && form.controls.brand.hasError('required')) {
             <div class="invalid-feedback d-block">La marca es obligatoria.</div>
           }
         </div>
         <div class="mb-3">
-          <label class="form-label">Precio (1–999)</label>
-          <input type="number" class="form-control" formControlName="price" min="1" max="999" />
+          <label class="form-label">Precio</label>
+          <input type="number" class="form-control" formControlName="price" min="1" max="999" step="1" />
+          <div class="form-hint">Entero obligatorio, entre 1 y 999 (sin decimales).</div>
           @if (form.controls.price.touched && form.controls.price.invalid) {
             <div class="invalid-feedback d-block">El precio debe ser un entero entre 1 y 999.</div>
           }

@@ -39,6 +39,7 @@
         <div class="mb-3">
           <label class="form-label">Nombre del perfil</label>
           <input type="text" class="form-control" formControlName="name" />
+          <div class="form-hint">Obligatorio. Máximo 120 caracteres.</div>
           @if (form.controls.name.touched && form.controls.name.hasError('required')) {
             <div class="invalid-feedback d-block">El nombre es obligatorio.</div>
           }
@@ -52,6 +53,7 @@
               <span class="form-check-label">{{ option.label }}</span>
             </label>
           }
+          <div class="form-hint">Marca al menos una sección (productos, usuarios o perfiles).</div>
         </div>
 
         <button type="submit" class="btn btn-primary w-100" [disabled]="saving()">

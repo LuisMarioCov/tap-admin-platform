@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
+import { firstApiError } from '../../../shared/utils/api-error';
 
 @Component({
   selector: 'app-login',
@@ -48,22 +49,9 @@ export class LoginComponent {
   }
 
   private resolveErrorMessage(error: HttpErrorResponse): string {
-    if (error.status === 422) {
-      const payload = error.error as { errors?: Record<string, string[]>; message?: string };
-
-      if (payload.errors?.['email']?.[0]) {
-        return payload.errors['email'][0];
-      }
-
-      if (payload.message) {
-        return payload.message;
-      }
-    }
-
-    if (error.status === 429) {
-      return 'Demasiados intentos. Espera un momento e inténtalo de nuevo.';
-    }
-
-    return 'No pudimos iniciar sesión. Verifica tus datos o que la API esté encendida.';
+    return firstApiError(
+      error,
+      'No pudimos iniciar sesión. Verifica tus datos o que la API esté encendida.',
+    );
   }
 }

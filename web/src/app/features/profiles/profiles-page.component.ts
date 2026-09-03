@@ -6,6 +6,7 @@ import { SECTION_OPTIONS } from '../../shared/config/section-options';
 import { SectionKey } from '../../core/models/user.model';
 import { Profile } from '../../shared/models/profile.model';
 import { downloadBlob } from '../../shared/utils/download-blob';
+import { firstApiError } from '../../shared/utils/api-error';
 import { ProfilesService } from './profiles.service';
 
 @Component({
@@ -185,13 +186,6 @@ export class ProfilesPageComponent {
   }
 
   private resolveErrorMessage(error: HttpErrorResponse): string {
-    if (error.status === 422) {
-      const payload = error.error as { errors?: Record<string, string[]>; message?: string };
-      const firstError = Object.values(payload.errors ?? {})[0]?.[0];
-
-      return firstError ?? payload.message ?? 'Datos inválidos.';
-    }
-
-    return 'Ocurrió un error al guardar el perfil.';
+    return firstApiError(error, 'Ocurrió un error al guardar el perfil.');
   }
 }

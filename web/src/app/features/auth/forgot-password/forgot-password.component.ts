@@ -4,6 +4,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
+import { firstApiError } from '../../../shared/utils/api-error';
 
 @Component({
   selector: 'app-forgot-password',
@@ -19,6 +20,7 @@ export class ForgotPasswordComponent {
   readonly loading = signal(false);
   readonly errorMessage = signal<string | null>(null);
   readonly successMessage = signal<string | null>(null);
+  readonly resetQuery = signal<{ token: string; email: string } | null>(null);
 
   readonly form = this.formBuilder.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
@@ -27,6 +29,7 @@ export class ForgotPasswordComponent {
   submit(): void {
     this.errorMessage.set(null);
     this.successMessage.set(null);
+    this.resetQuery.set(null);
 
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -38,15 +41,32 @@ export class ForgotPasswordComponent {
       next: (response) => {
         this.loading.set(false);
         this.successMessage.set(response.message);
+        this.resetQuery.set(this.parseResetQuery(response.reset_url));
       },
       error: (error: HttpErrorResponse) => {
         this.loading.set(false);
-        this.errorMessage.set(
-          error.status === 429
-            ? 'Demasiados intentos. Espera un momento.'
-            : 'No pudimos procesar la solicitud.',
-        );
+        this.errorMessage.set(firstApiError(error, 'No pudimos procesar la solicitud.'));
       },
     });
+  }
+
+  private parseResetQuery(resetUrl?: string): { token: string; email: string } | null {
+    if (!resetUrl) {
+      return null;
+    }
+
+    try {
+      const parsed = new URL(resetUrl, window.location.origin);
+      const token = parsed.searchParams.get('token') ?? '';
+      const email = parsed.searchParams.get('email') ?? '';
+
+      if (!token || !email) {
+        return null;
+      }
+
+      return { token, email };
+    } catch {
+      return null;
+    }
   }
 }

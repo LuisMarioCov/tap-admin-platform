@@ -4,6 +4,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
+import { firstApiError } from '../../../shared/utils/api-error';
 
 @Component({
   selector: 'app-reset-password',
@@ -61,9 +62,7 @@ export class ResetPasswordComponent {
       },
       error: (error: HttpErrorResponse) => {
         this.loading.set(false);
-        const payload = error.error as { errors?: Record<string, string[]>; message?: string };
-        const firstError = Object.values(payload.errors ?? {})[0]?.[0];
-        this.errorMessage.set(firstError ?? payload.message ?? 'No pudimos actualizar la contraseña.');
+        this.errorMessage.set(firstApiError(error, 'No pudimos actualizar la contraseña.'));
       },
     });
   }

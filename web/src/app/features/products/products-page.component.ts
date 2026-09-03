@@ -4,6 +4,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Product } from '../../shared/models/product.model';
 import { downloadBlob } from '../../shared/utils/download-blob';
+import { firstApiError } from '../../shared/utils/api-error';
 import { ProductsService } from './products.service';
 
 @Component({
@@ -159,17 +160,6 @@ export class ProductsPageComponent {
   }
 
   private resolveErrorMessage(error: HttpErrorResponse): string {
-    if (error.status === 422) {
-      const payload = error.error as { errors?: Record<string, string[]>; message?: string };
-      const firstError = Object.values(payload.errors ?? {})[0]?.[0];
-
-      return firstError ?? payload.message ?? 'Datos inválidos.';
-    }
-
-    if (error.status === 429) {
-      return 'Demasiadas solicitudes. Espera un momento.';
-    }
-
-    return 'Ocurrió un error al guardar el producto.';
+    return firstApiError(error, 'Ocurrió un error al guardar el producto.');
   }
 }

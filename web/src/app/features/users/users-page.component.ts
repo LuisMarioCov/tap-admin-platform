@@ -5,6 +5,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { User } from '../../core/models/user.model';
 import { Profile } from '../../shared/models/profile.model';
 import { downloadBlob } from '../../shared/utils/download-blob';
+import { firstApiError } from '../../shared/utils/api-error';
 import { ProfilesService } from '../profiles/profiles.service';
 import { UsersService } from './users.service';
 
@@ -40,8 +41,8 @@ export class UsersPageComponent implements OnDestroy {
     name: ['', [Validators.required, Validators.maxLength(120)]],
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.minLength(8)]],
-    phone: [''],
-    country_code: ['+52'],
+    phone: ['', [Validators.maxLength(20)]],
+    country_code: ['+52', [Validators.maxLength(6)]],
     profile_ids: [[] as string[], [Validators.required, Validators.minLength(1)]],
   });
 
@@ -118,6 +119,15 @@ export class UsersPageComponent implements OnDestroy {
   onPhotoSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0] ?? null;
+
+    if (file && file.size > 2 * 1024 * 1024) {
+      this.selectedPhoto = null;
+      this.selectedPhotoName.set(null);
+      input.value = '';
+      this.errorMessage.set('La foto excede 2 MB, archivo demasiado grande.');
+      return;
+    }
+
     this.selectedPhoto = file;
     this.selectedPhotoName.set(file?.name ?? null);
   }
@@ -262,13 +272,10 @@ export class UsersPageComponent implements OnDestroy {
   }
 
   private resolveErrorMessage(error: HttpErrorResponse): string {
-    if (error.status === 422) {
-      const payload = error.error as { errors?: Record<string, string[]>; message?: string };
-      const firstError = Object.values(payload.errors ?? {})[0]?.[0];
-
-      return firstError ?? payload.message ?? 'Datos inválidos.';
+    if (error.status === 0) {
+      return 'La foto excede 2 MB, archivo demasiado grande.';
     }
 
-    return 'Ocurrió un error al guardar el usuario.';
+    return firstApiError(error, 'Ocurrió un error al guardar el usuario.');
   }
 }

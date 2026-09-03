@@ -39,23 +39,34 @@
         <div class="mb-3">
           <label class="form-label">Nombre</label>
           <input type="text" class="form-control" formControlName="name" />
+          <div class="form-hint">Obligatorio. Máximo 120 caracteres.</div>
         </div>
         <div class="mb-3">
           <label class="form-label">Correo</label>
           <input type="email" class="form-control" formControlName="email" />
+          <div class="form-hint">Debe ser único y con formato válido (ejemplo: nombre&#64;empresa.com).</div>
         </div>
         <div class="mb-3">
           <label class="form-label">Contraseña {{ editingUser() ? '(opcional)' : '' }}</label>
           <input type="password" class="form-control" formControlName="password" autocomplete="new-password" />
+          <div class="form-hint">
+            {{
+              editingUser()
+                ? 'Déjala vacía para no cambiarla. Si la cambias: mínimo 8 caracteres, con letras y números.'
+                : 'Obligatoria. Mínimo 8 caracteres, con al menos una letra y un número.'
+            }}
+          </div>
         </div>
         <div class="row mb-3">
           <div class="col-5">
             <label class="form-label">Cód. país</label>
             <input type="text" class="form-control" formControlName="country_code" />
+            <div class="form-hint">Opcional. Máximo 6 caracteres (ejemplo: +52).</div>
           </div>
           <div class="col-7">
             <label class="form-label">Teléfono</label>
             <input type="text" class="form-control" formControlName="phone" />
+            <div class="form-hint">Opcional. Máximo 20 caracteres.</div>
           </div>
         </div>
 
@@ -75,6 +86,7 @@
               </span>
             </label>
           }
+          <div class="form-hint">Elige al menos un perfil; define qué secciones podrá ver.</div>
         </div>
 
         <div class="mb-3">
@@ -88,6 +100,7 @@
           @if (selectedPhotoName()) {
             <div class="form-hint">Archivo: {{ selectedPhotoName() }}</div>
           }
+          <div class="form-hint">JPG, PNG o WebP. Máximo 2 MB. Al crear usuario es obligatoria.</div>
         </div>
 
         <button type="submit" class="btn btn-primary w-100" [disabled]="saving()">
