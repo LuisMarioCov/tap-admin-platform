@@ -22,6 +22,7 @@ export class ResetPasswordComponent {
   readonly loading = signal(false);
   readonly errorMessage = signal<string | null>(null);
   readonly successMessage = signal<string | null>(null);
+  readonly linkReady = signal(true);
 
   readonly form = this.formBuilder.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
@@ -32,10 +33,14 @@ export class ResetPasswordComponent {
 
   constructor() {
     const params = this.route.snapshot.queryParamMap;
-    this.form.patchValue({
-      email: params.get('email') ?? '',
-      token: params.get('token') ?? '',
-    });
+    const email = params.get('email') ?? '';
+    const token = params.get('token') ?? '';
+    this.form.patchValue({ email, token });
+
+    if (!email || !token) {
+      this.linkReady.set(false);
+      this.errorMessage.set('Este enlace no es válido. Pide uno nuevo desde “Olvidé mi contraseña”.');
+    }
   }
 
   submit(): void {

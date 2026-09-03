@@ -20,7 +20,6 @@ export class ForgotPasswordComponent {
   readonly loading = signal(false);
   readonly errorMessage = signal<string | null>(null);
   readonly successMessage = signal<string | null>(null);
-  readonly resetQuery = signal<{ token: string; email: string } | null>(null);
 
   readonly form = this.formBuilder.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
@@ -29,7 +28,6 @@ export class ForgotPasswordComponent {
   submit(): void {
     this.errorMessage.set(null);
     this.successMessage.set(null);
-    this.resetQuery.set(null);
 
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -41,32 +39,11 @@ export class ForgotPasswordComponent {
       next: (response) => {
         this.loading.set(false);
         this.successMessage.set(response.message);
-        this.resetQuery.set(this.parseResetQuery(response.reset_url));
       },
       error: (error: HttpErrorResponse) => {
         this.loading.set(false);
-        this.errorMessage.set(firstApiError(error, 'No pudimos procesar la solicitud.'));
+        this.errorMessage.set(firstApiError(error, 'No pudimos enviar el correo. Inténtalo de nuevo.'));
       },
     });
-  }
-
-  private parseResetQuery(resetUrl?: string): { token: string; email: string } | null {
-    if (!resetUrl) {
-      return null;
-    }
-
-    try {
-      const parsed = new URL(resetUrl, window.location.origin);
-      const token = parsed.searchParams.get('token') ?? '';
-      const email = parsed.searchParams.get('email') ?? '';
-
-      if (!token || !email) {
-        return null;
-      }
-
-      return { token, email };
-    } catch {
-      return null;
-    }
   }
 }

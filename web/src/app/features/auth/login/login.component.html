@@ -32,7 +32,6 @@
             @if (form.controls.email.touched && form.controls.email.hasError('email')) {
               <div class="invalid-feedback d-block">Ingresa un correo válido.</div>
             }
-            <div class="form-hint">Usa el correo con el que te registraron (ejemplo: usuario&#64;correo.com).</div>
           </div>
 
           <div class="mb-3">
@@ -51,7 +50,6 @@
             @if (form.controls.password.touched && form.controls.password.hasError('minlength')) {
               <div class="invalid-feedback d-block">Mínimo 8 caracteres.</div>
             }
-            <div class="form-hint">Mínimo 8 caracteres. En cuentas nuevas debe incluir letras y números.</div>
           </div>
 
           <div class="form-footer">

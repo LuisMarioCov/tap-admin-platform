@@ -44,9 +44,9 @@ class AuthService
         }
     }
 
-    public function forgotPassword(string $email): ?string
+    public function forgotPassword(string $email): void
     {
-        return $this->passwordResetService->sendResetLink($email);
+        $this->passwordResetService->sendResetLink($email);
     }
 
     public function resetPassword(string $email, string $token, string $password): void

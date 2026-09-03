@@ -23,7 +23,7 @@ export function firstApiError(error: HttpErrorResponse, fallback: string): strin
   }
 
   if (error.status === 0) {
-    return 'No se pudo contactar al servidor. Revisa el archivo (máx. 2 MB) e inténtalo otra vez.';
+    return 'No se pudo contactar al servidor. Revisa tu conexión o que la API esté encendida.';
   }
 
   return fallback;

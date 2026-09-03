@@ -46,19 +46,11 @@ class AuthController extends Controller
 
     public function forgotPassword(ForgotPasswordRequest $request): JsonResponse
     {
-        $resetUrl = $this->authService->forgotPassword((string) $request->validated('email'));
+        $this->authService->forgotPassword((string) $request->validated('email'));
 
-        $payload = [
-            'message' => 'Si el correo existe, enviamos instrucciones de recuperación.',
-        ];
-
-        // Sin SMTP en el examen: devolvemos el enlace para completar el flujo en pantalla.
-        if ($resetUrl !== null) {
-            $payload['reset_url'] = $resetUrl;
-            $payload['message'] = 'Usa el enlace de abajo para elegir una nueva contraseña (válido 60 minutos).';
-        }
-
-        return response()->json($payload);
+        return response()->json([
+            'message' => 'Si el correo está registrado, TAP te envió un enlace. Ábrelo desde tu bandeja para confirmar y elegir una nueva contraseña.',
+        ]);
     }
 
     public function resetPassword(ResetPasswordRequest $request): JsonResponse
