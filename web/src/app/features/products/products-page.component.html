@@ -1,123 +1,138 @@
-<section class="products-page">
-  <header class="page-header">
-    <div>
-      <p class="eyebrow">Módulo</p>
-      <h1>Productos</h1>
-      <p class="subtitle">Alta, edición, eliminación y exportación contra la API Laravel.</p>
+<div class="page-header d-print-none">
+  <div class="row align-items-center g-2">
+    <div class="col">
+      <div class="page-pretitle">Catálogo</div>
+      <h2 class="page-title">Productos</h2>
     </div>
-
-    <div class="header-actions">
-      <button type="button" class="secondary" (click)="export('pdf')" [disabled]="exporting() !== null">
-        {{ exporting() === 'pdf' ? 'Exportando…' : 'Exportar PDF' }}
-      </button>
-      <button type="button" class="secondary" (click)="export('xlsx')" [disabled]="exporting() !== null">
-        {{ exporting() === 'xlsx' ? 'Exportando…' : 'Exportar Excel (.xlsx)' }}
-      </button>
-    </div>
-  </header>
-
-  @if (errorMessage()) {
-    <div class="alert error" role="alert">{{ errorMessage() }}</div>
-  }
-
-  @if (successMessage()) {
-    <div class="alert success" role="status">{{ successMessage() }}</div>
-  }
-
-  <div class="layout">
-    <article class="panel form-panel">
-      <div class="panel-header">
-        <h2>{{ editingProduct() ? 'Editar producto' : 'Nuevo producto' }}</h2>
-        @if (editingProduct()) {
-          <button type="button" class="link" (click)="startCreate()">Cancelar edición</button>
-        }
+    <div class="col-auto ms-auto d-print-none">
+      <div class="btn-list">
+        <button type="button" class="btn btn-outline-primary" (click)="export('pdf')" [disabled]="exporting() !== null">
+          {{ exporting() === 'pdf' ? 'Exportando…' : 'Exportar PDF' }}
+        </button>
+        <button type="button" class="btn btn-outline-primary" (click)="export('xlsx')" [disabled]="exporting() !== null">
+          {{ exporting() === 'xlsx' ? 'Exportando…' : 'Exportar Excel' }}
+        </button>
       </div>
+    </div>
+  </div>
+</div>
 
+@if (errorMessage()) {
+  <div class="alert alert-danger" role="alert">{{ errorMessage() }}</div>
+}
+@if (successMessage()) {
+  <div class="alert alert-success" role="status">{{ successMessage() }}</div>
+}
+
+<div class="tap-crud-grid">
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title mb-0">{{ editingProduct() ? 'Editar producto' : 'Nuevo producto' }}</h3>
+      @if (editingProduct()) {
+        <div class="card-actions">
+          <button type="button" class="btn btn-link" (click)="startCreate()">Cancelar</button>
+        </div>
+      }
+    </div>
+    <div class="card-body">
       <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
-        <label>
-          Nombre
-          <input type="text" formControlName="name" />
+        <div class="mb-3">
+          <label class="form-label">Nombre</label>
+          <input type="text" class="form-control" formControlName="name" />
           @if (form.controls.name.touched && form.controls.name.hasError('required')) {
-            <span class="field-error">El nombre es obligatorio.</span>
+            <div class="invalid-feedback d-block">El nombre es obligatorio.</div>
           }
-        </label>
-
-        <label>
-          Marca
-          <input type="text" formControlName="brand" />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Marca</label>
+          <input type="text" class="form-control" formControlName="brand" />
           @if (form.controls.brand.touched && form.controls.brand.hasError('required')) {
-            <span class="field-error">La marca es obligatoria.</span>
+            <div class="invalid-feedback d-block">La marca es obligatoria.</div>
           }
-        </label>
-
-        <label>
-          Precio (1–999)
-          <input type="number" formControlName="price" min="1" max="999" />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Precio (1–999)</label>
+          <input type="number" class="form-control" formControlName="price" min="1" max="999" />
           @if (form.controls.price.touched && form.controls.price.invalid) {
-            <span class="field-error">El precio debe ser un entero entre 1 y 999.</span>
+            <div class="invalid-feedback d-block">El precio debe ser un entero entre 1 y 999.</div>
           }
-        </label>
-
-        <button type="submit" [disabled]="saving()">
+        </div>
+        <button type="submit" class="btn btn-primary w-100" [disabled]="saving()">
           {{ saving() ? 'Guardando…' : (editingProduct() ? 'Actualizar' : 'Crear producto') }}
         </button>
       </form>
-    </article>
+    </div>
+  </div>
 
-    <article class="panel table-panel">
-      <div class="panel-header">
-        <h2>Listado</h2>
-        <p>{{ total() }} producto(s)</p>
-      </div>
-
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title mb-0">Listado</h3>
+      <div class="card-actions text-secondary">{{ total() }} producto(s)</div>
+    </div>
+    <div class="card-body p-0">
       @if (loading()) {
-        <p class="muted">Cargando productos…</p>
+        <div class="p-3 text-secondary">Cargando productos…</div>
       } @else if (products().length === 0) {
-        <p class="muted">No hay productos registrados todavía.</p>
+        <div class="empty">
+          <p class="empty-title">Sin productos</p>
+          <p class="empty-subtitle text-secondary">Crea el primero con el formulario.</p>
+        </div>
       } @else {
-        <div class="table-wrap">
-          <table>
+        <div class="table-responsive">
+          <table class="table table-vcenter card-table">
             <thead>
               <tr>
                 <th>Código</th>
                 <th>Nombre</th>
                 <th>Marca</th>
                 <th>Precio</th>
-                <th>Acciones</th>
+                <th class="w-1">Acciones</th>
               </tr>
             </thead>
             <tbody>
               @for (product of products(); track product.id) {
                 <tr>
-                  <td>{{ product.code }}</td>
+                  <td><code>{{ product.code }}</code></td>
                   <td>{{ product.name }}</td>
-                  <td>{{ product.brand }}</td>
+                  <td class="text-secondary">{{ product.brand }}</td>
                   <td>{{ product.price }}</td>
-                  <td class="actions">
-                    <button type="button" class="link" (click)="startEdit(product)">Editar</button>
-                    <button type="button" class="link danger" (click)="remove(product)">Eliminar</button>
+                  <td>
+                    <div class="tap-actions">
+                      <button type="button" class="btn btn-sm btn-ghost-primary" (click)="startEdit(product)">
+                        Editar
+                      </button>
+                      <button type="button" class="btn btn-sm btn-ghost-danger" (click)="remove(product)">
+                        Eliminar
+                      </button>
+                    </div>
                   </td>
                 </tr>
               }
             </tbody>
           </table>
         </div>
-
-        <div class="pagination">
-          <button type="button" class="secondary" (click)="goToPage(currentPage() - 1)" [disabled]="currentPage() <= 1">
-            Anterior
-          </button>
-          <span>Página {{ currentPage() }} de {{ lastPage() }}</span>
-          <button
-            type="button"
-            class="secondary"
-            (click)="goToPage(currentPage() + 1)"
-            [disabled]="currentPage() >= lastPage()"
-          >
-            Siguiente
-          </button>
-        </div>
       }
-    </article>
+    </div>
+    @if (!loading() && products().length > 0) {
+      <div class="card-footer d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <button
+          type="button"
+          class="btn btn-outline-secondary btn-sm"
+          (click)="goToPage(currentPage() - 1)"
+          [disabled]="currentPage() <= 1"
+        >
+          Anterior
+        </button>
+        <span class="text-secondary small">Página {{ currentPage() }} de {{ lastPage() }}</span>
+        <button
+          type="button"
+          class="btn btn-outline-secondary btn-sm"
+          (click)="goToPage(currentPage() + 1)"
+          [disabled]="currentPage() >= lastPage()"
+        >
+          Siguiente
+        </button>
+      </div>
+    }
   </div>
-</section>
+</div>

@@ -1,16 +1,21 @@
-<section class="state-page">
-  <div class="state-card">
-    <p class="code">403</p>
-    <h1>Acceso no permitido</h1>
-    <p>
-      Tu gafete es válido, pero no tienes clearance para esta sección.
-    </p>
+<div class="page-header">
+  <div class="row align-items-center">
+    <div class="col">
+      <div class="page-pretitle">Error</div>
+      <h2 class="page-title">403 · Acceso no permitido</h2>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <p class="mb-2">Tu sesión es válida, pero no tienes permiso para esta sección.</p>
     @if (user(); as currentUser) {
-      <p class="meta">
+      <p class="text-secondary mb-3">
         Sesión: <strong>{{ currentUser.name }}</strong> —
         Secciones: {{ currentUser.allowed_sections.join(', ') || 'ninguna' }}
       </p>
     }
-    <a routerLink="/inicio">Volver al inicio</a>
+    <a routerLink="/inicio" class="btn btn-primary">Volver al inicio</a>
   </div>
-</section>
+</div>

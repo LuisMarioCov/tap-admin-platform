@@ -1,44 +1,70 @@
-<section class="auth-shell">
-  <div class="auth-card">
-    <p class="eyebrow">TAP Terminal</p>
-    <h1>Iniciar sesión</h1>
-    <p class="subtitle">Ingresa con tu cuenta para acceder al panel administrativo.</p>
+<div class="page page-center">
+  <div class="container container-tight py-4">
+    <div class="text-center mb-4">
+      <div class="navbar-brand navbar-brand-autodark">
+        <span class="fs-2 fw-bold">TAP Admin</span>
+      </div>
+      <div class="text-secondary">Panel administrativo · TAP Terminal</div>
+    </div>
 
-    @if (errorMessage()) {
-      <div class="alert" role="alert">{{ errorMessage() }}</div>
-    }
+    <div class="card card-md">
+      <div class="card-body">
+        <h2 class="h2 text-center mb-4">Iniciar sesión</h2>
 
-    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
-      <label>
-        Correo electrónico
-        <input type="email" formControlName="email" autocomplete="username" />
-        @if (form.controls.email.touched && form.controls.email.hasError('required')) {
-          <span class="field-error">El correo es obligatorio.</span>
+        @if (errorMessage()) {
+          <div class="alert alert-danger" role="alert">{{ errorMessage() }}</div>
         }
-        @if (form.controls.email.touched && form.controls.email.hasError('email')) {
-          <span class="field-error">Ingresa un correo válido.</span>
-        }
-      </label>
 
-      <label>
-        Contraseña
-        <input type="password" formControlName="password" autocomplete="current-password" />
-        @if (form.controls.password.touched && form.controls.password.hasError('required')) {
-          <span class="field-error">La contraseña es obligatoria.</span>
-        }
-      </label>
+        <form [formGroup]="form" (ngSubmit)="submit()" novalidate autocomplete="off">
+          <div class="mb-3">
+            <label class="form-label" for="login-email">Correo electrónico</label>
+            <input
+              id="login-email"
+              type="email"
+              class="form-control"
+              formControlName="email"
+              autocomplete="username"
+              placeholder="usuario@empresa.com"
+            />
+            @if (form.controls.email.touched && form.controls.email.hasError('required')) {
+              <div class="invalid-feedback d-block">El correo es obligatorio.</div>
+            }
+            @if (form.controls.email.touched && form.controls.email.hasError('email')) {
+              <div class="invalid-feedback d-block">Ingresa un correo válido.</div>
+            }
+          </div>
 
-      <button type="submit" [disabled]="loading()">
-        {{ loading() ? 'Entrando…' : 'Entrar' }}
-      </button>
-    </form>
+          <div class="mb-2">
+            <label class="form-label" for="login-password">
+              Contraseña
+              <span class="form-label-description">
+                <a routerLink="/forgot-password" tabindex="-1">¿Olvidaste tu contraseña?</a>
+              </span>
+            </label>
+            <input
+              id="login-password"
+              type="password"
+              class="form-control"
+              formControlName="password"
+              autocomplete="current-password"
+              placeholder="Tu contraseña"
+            />
+            @if (form.controls.password.touched && form.controls.password.hasError('required')) {
+              <div class="invalid-feedback d-block">La contraseña es obligatoria.</div>
+            }
+          </div>
 
-    <p class="hint">
-      <a routerLink="/forgot-password">¿Olvidaste tu contraseña?</a>
-    </p>
+          <div class="form-footer">
+            <button type="submit" class="btn btn-primary w-100" [disabled]="loading()">
+              {{ loading() ? 'Entrando…' : 'Entrar' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
 
-    <p class="hint">
-      Demo admin: <code>admin&#64;tap.local</code> / <code>Admin123!</code>
-    </p>
+    <div class="text-center text-secondary mt-3">
+      Demo: <code>admin&#64;tap.local</code> / <code>Admin123!</code>
+    </div>
   </div>
-</section>
+</div>

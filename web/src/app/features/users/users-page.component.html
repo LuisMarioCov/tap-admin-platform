@@ -1,107 +1,118 @@
-<section class="users-page">
-  <header class="page-header">
-    <div>
-      <p class="eyebrow">Módulo</p>
-      <h1>Usuarios</h1>
-      <p class="subtitle">Cuentas, foto en GridFS y perfiles asignados (`profile_ids`).</p>
+<div class="page-header d-print-none">
+  <div class="row align-items-center g-2">
+    <div class="col">
+      <div class="page-pretitle">Cuentas</div>
+      <h2 class="page-title">Usuarios</h2>
     </div>
-
-    <div class="header-actions">
-      <button type="button" class="secondary" (click)="export('pdf')" [disabled]="exporting() !== null">
-        {{ exporting() === 'pdf' ? 'Exportando…' : 'Exportar PDF' }}
-      </button>
-      <button type="button" class="secondary" (click)="export('xlsx')" [disabled]="exporting() !== null">
-        {{ exporting() === 'xlsx' ? 'Exportando…' : 'Exportar Excel (.xlsx)' }}
-      </button>
-    </div>
-  </header>
-
-  @if (errorMessage()) {
-    <div class="alert error" role="alert">{{ errorMessage() }}</div>
-  }
-
-  @if (successMessage()) {
-    <div class="alert success" role="status">{{ successMessage() }}</div>
-  }
-
-  <div class="layout">
-    <article class="panel form-panel">
-      <div class="panel-header">
-        <h2>{{ editingUser() ? 'Editar usuario' : 'Nuevo usuario' }}</h2>
-        @if (editingUser()) {
-          <button type="button" class="link" (click)="startCreate()">Cancelar edición</button>
-        }
+    <div class="col-auto ms-auto">
+      <div class="btn-list">
+        <button type="button" class="btn btn-outline-primary" (click)="export('pdf')" [disabled]="exporting() !== null">
+          {{ exporting() === 'pdf' ? 'Exportando…' : 'Exportar PDF' }}
+        </button>
+        <button type="button" class="btn btn-outline-primary" (click)="export('xlsx')" [disabled]="exporting() !== null">
+          {{ exporting() === 'xlsx' ? 'Exportando…' : 'Exportar Excel' }}
+        </button>
       </div>
+    </div>
+  </div>
+</div>
 
+@if (errorMessage()) {
+  <div class="alert alert-danger" role="alert">{{ errorMessage() }}</div>
+}
+@if (successMessage()) {
+  <div class="alert alert-success" role="status">{{ successMessage() }}</div>
+}
+
+<div class="tap-crud-grid">
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title mb-0">{{ editingUser() ? 'Editar usuario' : 'Nuevo usuario' }}</h3>
+      @if (editingUser()) {
+        <div class="card-actions">
+          <button type="button" class="btn btn-link" (click)="startCreate()">Cancelar</button>
+        </div>
+      }
+    </div>
+    <div class="card-body">
       <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
-        <label>
-          Nombre
-          <input type="text" formControlName="name" />
-        </label>
-
-        <label>
-          Correo
-          <input type="email" formControlName="email" />
-        </label>
-
-        <label>
-          Contraseña {{ editingUser() ? '(opcional)' : '' }}
-          <input type="password" formControlName="password" autocomplete="new-password" />
-        </label>
-
-        <div class="row-2">
-          <label>
-            Código país
-            <input type="text" formControlName="country_code" />
-          </label>
-          <label>
-            Teléfono
-            <input type="text" formControlName="phone" />
-          </label>
+        <div class="mb-3">
+          <label class="form-label">Nombre</label>
+          <input type="text" class="form-control" formControlName="name" />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Correo</label>
+          <input type="email" class="form-control" formControlName="email" />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Contraseña {{ editingUser() ? '(opcional)' : '' }}</label>
+          <input type="password" class="form-control" formControlName="password" autocomplete="new-password" />
+        </div>
+        <div class="row mb-3">
+          <div class="col-5">
+            <label class="form-label">Cód. país</label>
+            <input type="text" class="form-control" formControlName="country_code" />
+          </div>
+          <div class="col-7">
+            <label class="form-label">Teléfono</label>
+            <input type="text" class="form-control" formControlName="phone" />
+          </div>
         </div>
 
-        <fieldset class="sections-fieldset">
-          <legend>Perfiles</legend>
+        <div class="mb-3">
+          <label class="form-label">Perfiles</label>
           @for (profile of profiles(); track profile.id) {
-            <label class="checkbox-row">
+            <label class="form-check mb-1">
               <input
+                class="form-check-input"
                 type="checkbox"
                 [checked]="isProfileSelected(profile.id)"
                 (change)="toggleProfile(profile.id, $any($event.target).checked)"
               />
-              {{ profile.name }}
-              <span class="hint-inline">({{ profile.section_keys.join(', ') }})</span>
+              <span class="form-check-label">
+                {{ profile.name }}
+                <span class="text-secondary small">({{ profile.section_keys.join(', ') }})</span>
+              </span>
             </label>
           }
-        </fieldset>
+        </div>
 
-        <label>
-          Foto {{ editingUser() ? '(opcional)' : '(obligatoria)' }}
-          <input type="file" accept="image/jpeg,image/png,image/webp" (change)="onPhotoSelected($event)" />
+        <div class="mb-3">
+          <label class="form-label">Foto {{ editingUser() ? '(opcional)' : '(obligatoria)' }}</label>
+          <input
+            type="file"
+            class="form-control"
+            accept="image/jpeg,image/png,image/webp"
+            (change)="onPhotoSelected($event)"
+          />
           @if (selectedPhotoName()) {
-            <span class="hint-inline">Archivo: {{ selectedPhotoName() }}</span>
+            <div class="form-hint">Archivo: {{ selectedPhotoName() }}</div>
           }
-        </label>
+        </div>
 
-        <button type="submit" [disabled]="saving()">
+        <button type="submit" class="btn btn-primary w-100" [disabled]="saving()">
           {{ saving() ? 'Guardando…' : (editingUser() ? 'Actualizar' : 'Crear usuario') }}
         </button>
       </form>
-    </article>
+    </div>
+  </div>
 
-    <article class="panel table-panel">
-      <div class="panel-header">
-        <h2>Listado</h2>
-        <p>{{ total() }} usuario(s)</p>
-      </div>
-
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title mb-0">Listado</h3>
+      <div class="card-actions text-secondary">{{ total() }} usuario(s)</div>
+    </div>
+    <div class="card-body p-0">
       @if (loading()) {
-        <p class="muted">Cargando usuarios…</p>
+        <div class="p-3 text-secondary">Cargando usuarios…</div>
       } @else if (users().length === 0) {
-        <p class="muted">No hay usuarios registrados todavía.</p>
+        <div class="empty">
+          <p class="empty-title">Sin usuarios</p>
+          <p class="empty-subtitle text-secondary">Crea una cuenta con foto y perfiles.</p>
+        </div>
       } @else {
-        <div class="table-wrap">
-          <table>
+        <div class="table-responsive">
+          <table class="table table-vcenter card-table">
             <thead>
               <tr>
                 <th>Foto</th>
@@ -109,7 +120,7 @@
                 <th>Nombre</th>
                 <th>Email</th>
                 <th>Perfiles</th>
-                <th>Acciones</th>
+                <th class="w-1">Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -117,40 +128,52 @@
                 <tr>
                   <td>
                     @if (photoPreviews()[user.id]; as preview) {
-                      <img [src]="preview" [alt]="user.name" class="avatar" />
+                      <img [src]="preview" [alt]="user.name" class="tap-avatar" />
                     } @else {
-                      <span class="avatar placeholder">—</span>
+                      <span class="tap-avatar-placeholder">—</span>
                     }
                   </td>
-                  <td>{{ user.code }}</td>
+                  <td><code>{{ user.code }}</code></td>
                   <td>{{ user.name }}</td>
-                  <td>{{ user.email }}</td>
+                  <td class="text-secondary">{{ user.email }}</td>
                   <td>{{ profileNames(user) }}</td>
-                  <td class="actions">
-                    <button type="button" class="link" (click)="startEdit(user)">Editar</button>
-                    <button type="button" class="link danger" (click)="remove(user)">Eliminar</button>
+                  <td>
+                    <div class="tap-actions">
+                      <button type="button" class="btn btn-sm btn-ghost-primary" (click)="startEdit(user)">
+                        Editar
+                      </button>
+                      <button type="button" class="btn btn-sm btn-ghost-danger" (click)="remove(user)">
+                        Eliminar
+                      </button>
+                    </div>
                   </td>
                 </tr>
               }
             </tbody>
           </table>
         </div>
-
-        <div class="pagination">
-          <button type="button" class="secondary" (click)="goToPage(currentPage() - 1)" [disabled]="currentPage() <= 1">
-            Anterior
-          </button>
-          <span>Página {{ currentPage() }} de {{ lastPage() }}</span>
-          <button
-            type="button"
-            class="secondary"
-            (click)="goToPage(currentPage() + 1)"
-            [disabled]="currentPage() >= lastPage()"
-          >
-            Siguiente
-          </button>
-        </div>
       }
-    </article>
+    </div>
+    @if (!loading() && users().length > 0) {
+      <div class="card-footer d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <button
+          type="button"
+          class="btn btn-outline-secondary btn-sm"
+          (click)="goToPage(currentPage() - 1)"
+          [disabled]="currentPage() <= 1"
+        >
+          Anterior
+        </button>
+        <span class="text-secondary small">Página {{ currentPage() }} de {{ lastPage() }}</span>
+        <button
+          type="button"
+          class="btn btn-outline-secondary btn-sm"
+          (click)="goToPage(currentPage() + 1)"
+          [disabled]="currentPage() >= lastPage()"
+        >
+          Siguiente
+        </button>
+      </div>
+    }
   </div>
-</section>
+</div>

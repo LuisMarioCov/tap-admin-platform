@@ -1,52 +1,73 @@
-<div class="shell" [class.menu-open]="menuOpen()">
-  <header class="mobile-bar">
-    <div>
-      <p class="eyebrow">TAP Terminal</p>
-      <strong>Panel admin</strong>
-    </div>
-    <button type="button" class="menu-toggle" (click)="toggleMenu()" [attr.aria-expanded]="menuOpen()">
-      {{ menuOpen() ? 'Cerrar' : 'Menú' }}
-    </button>
-  </header>
-
-  @if (menuOpen()) {
-    <button type="button" class="backdrop" aria-label="Cerrar menú" (click)="closeMenu()"></button>
-  }
-
-  <aside class="sidebar">
-    <div class="brand">
-      <p class="eyebrow">TAP Terminal</p>
-      <h1>Panel admin</h1>
-    </div>
-
-    <nav aria-label="Secciones permitidas">
-      <a
-        routerLink="/inicio"
-        routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: true }"
-        (click)="closeMenu()"
+<div class="page" [class.show-menu]="menuOpen()">
+  <aside class="navbar navbar-vertical navbar-expand-lg" data-bs-theme="dark">
+    <div class="container-fluid">
+      <button
+        type="button"
+        class="navbar-toggler"
+        (click)="toggleMenu()"
+        [attr.aria-expanded]="menuOpen()"
+        aria-label="Abrir menú"
       >
-        Inicio
-      </a>
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-      @for (item of navItems(); track item.section) {
-        <a [routerLink]="item.route" routerLinkActive="active" (click)="closeMenu()">
-          {{ item.label }}
-        </a>
-      }
-    </nav>
+      <h1 class="navbar-brand navbar-brand-autodark">
+        <span class="d-none d-lg-inline">TAP Admin</span>
+        <span class="d-lg-none">TAP</span>
+      </h1>
 
-    @if (user(); as currentUser) {
-      <div class="user-card">
-        <p class="user-name">{{ currentUser.name }}</p>
-        <p class="user-meta">{{ currentUser.email }}</p>
-        <p class="user-meta">Código: {{ currentUser.code }}</p>
-        <button type="button" (click)="logout()">Cerrar sesión</button>
+      <div class="collapse navbar-collapse" [class.show]="menuOpen()" id="sidebar-menu">
+        <ul class="navbar-nav pt-lg-3">
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              routerLink="/inicio"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }"
+              (click)="closeMenu()"
+            >
+              <span class="nav-link-title">Inicio</span>
+            </a>
+          </li>
+
+          @for (item of navItems(); track item.section) {
+            <li class="nav-item">
+              <a class="nav-link" [routerLink]="item.route" routerLinkActive="active" (click)="closeMenu()">
+                <span class="nav-link-title">{{ item.label }}</span>
+              </a>
+            </li>
+          }
+        </ul>
+
+        @if (user(); as currentUser) {
+          <div class="mt-auto mb-3 px-3 pt-4 border-top border-secondary">
+            <div class="text-secondary small mb-1">Sesión</div>
+            <div class="fw-bold text-white text-truncate">{{ currentUser.name }}</div>
+            <div class="small text-secondary text-truncate">{{ currentUser.email }}</div>
+            <div class="small text-secondary mb-3">{{ currentUser.code }}</div>
+            <button type="button" class="btn btn-outline-secondary w-100" (click)="logout()">
+              Cerrar sesión
+            </button>
+          </div>
+        }
       </div>
-    }
+    </div>
   </aside>
 
-  <main class="content">
-    <router-outlet />
-  </main>
+  @if (menuOpen()) {
+    <button type="button" class="tap-sidebar-backdrop" aria-label="Cerrar menú" (click)="closeMenu()"></button>
+  }
+
+  <div class="page-wrapper">
+    <div class="page-body">
+      <div class="container-xl">
+        <router-outlet />
+      </div>
+    </div>
+    <footer class="footer footer-transparent d-print-none">
+      <div class="container-xl">
+        <div class="text-secondary small">TAP Terminal · Panel administrativo</div>
+      </div>
+    </footer>
+  </div>
 </div>

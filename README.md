@@ -5,7 +5,7 @@ Laravel 11 + Angular 19 + MongoDB (examen TAP Terminal).
 ## Carpetas
 
 - `api/` backend
-- `web/` frontend
+- `web/` frontend (UI con [Tabler](https://tabler.io) / Bootstrap 5)
 - `postman/TAP-Admin-API.postman_collection.json` colección Postman
 
 ## Local

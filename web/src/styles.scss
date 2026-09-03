@@ -1,11 +1,12 @@
+/* Tabler UI Kit (Bootstrap 5) — https://github.com/tabler/tabler */
+@import '@tabler/core/dist/css/tabler.min.css';
+
 :root {
-  color-scheme: light;
-  --bg: #f4f6fb;
-  --surface: #ffffff;
-  --ink: #0f172a;
-  --muted: #64748b;
-  --line: #dbe3f0;
-  --accent: #0b5fff;
+  --tblr-font-sans-serif: 'IBM Plex Sans', 'Segoe UI', Tahoma, sans-serif;
+  --tblr-body-font-family: var(--tblr-font-sans-serif);
+  --tblr-primary: #206bc4;
+  --tblr-primary-rgb: 32, 107, 196;
+  --tblr-link-color: #206bc4;
 }
 
 *,
@@ -18,18 +19,8 @@ html,
 body {
   margin: 0;
   min-height: 100%;
-  font-family: "Segoe UI", system-ui, sans-serif;
-  background: var(--bg);
-  color: var(--ink);
+  font-family: var(--tblr-font-sans-serif);
   overflow-x: hidden;
-}
-
-button,
-input,
-select,
-textarea {
-  font: inherit;
-  max-width: 100%;
 }
 
 img {
@@ -37,15 +28,43 @@ img {
   height: auto;
 }
 
-input[type='text'],
-input[type='email'],
-input[type='password'],
-input[type='number'],
-input[type='tel'],
-input[type='file'],
-textarea,
-select {
-  width: 100%;
-  min-width: 0;
-  display: block;
+/* Layout helpers used across CRUD modules */
+.tap-crud-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 992px) {
+  .tap-crud-grid {
+    grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+.tap-avatar {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.25rem;
+  object-fit: cover;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.tap-avatar-placeholder {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--tblr-bg-surface-secondary, #f1f5f9);
+  color: var(--tblr-secondary, #667382);
+  font-size: 0.75rem;
+}
+
+.tap-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }

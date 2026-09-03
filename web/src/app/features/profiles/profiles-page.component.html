@@ -1,115 +1,133 @@
-<section class="profiles-page">
-  <header class="page-header">
-    <div>
-      <p class="eyebrow">Módulo</p>
-      <h1>Perfiles</h1>
-      <p class="subtitle">Define qué secciones puede usar cada rol del sistema.</p>
+<div class="page-header d-print-none">
+  <div class="row align-items-center g-2">
+    <div class="col">
+      <div class="page-pretitle">Acceso</div>
+      <h2 class="page-title">Perfiles</h2>
     </div>
-
-    <div class="header-actions">
-      <button type="button" class="secondary" (click)="export('pdf')" [disabled]="exporting() !== null">
-        {{ exporting() === 'pdf' ? 'Exportando…' : 'Exportar PDF' }}
-      </button>
-      <button type="button" class="secondary" (click)="export('xlsx')" [disabled]="exporting() !== null">
-        {{ exporting() === 'xlsx' ? 'Exportando…' : 'Exportar Excel (.xlsx)' }}
-      </button>
-    </div>
-  </header>
-
-  @if (errorMessage()) {
-    <div class="alert error" role="alert">{{ errorMessage() }}</div>
-  }
-
-  @if (successMessage()) {
-    <div class="alert success" role="status">{{ successMessage() }}</div>
-  }
-
-  <div class="layout">
-    <article class="panel form-panel">
-      <div class="panel-header">
-        <h2>{{ editingProfile() ? 'Editar perfil' : 'Nuevo perfil' }}</h2>
-        @if (editingProfile()) {
-          <button type="button" class="link" (click)="startCreate()">Cancelar edición</button>
-        }
+    <div class="col-auto ms-auto">
+      <div class="btn-list">
+        <button type="button" class="btn btn-outline-primary" (click)="export('pdf')" [disabled]="exporting() !== null">
+          {{ exporting() === 'pdf' ? 'Exportando…' : 'Exportar PDF' }}
+        </button>
+        <button type="button" class="btn btn-outline-primary" (click)="export('xlsx')" [disabled]="exporting() !== null">
+          {{ exporting() === 'xlsx' ? 'Exportando…' : 'Exportar Excel' }}
+        </button>
       </div>
+    </div>
+  </div>
+</div>
 
+@if (errorMessage()) {
+  <div class="alert alert-danger" role="alert">{{ errorMessage() }}</div>
+}
+@if (successMessage()) {
+  <div class="alert alert-success" role="status">{{ successMessage() }}</div>
+}
+
+<div class="tap-crud-grid">
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title mb-0">{{ editingProfile() ? 'Editar perfil' : 'Nuevo perfil' }}</h3>
+      @if (editingProfile()) {
+        <div class="card-actions">
+          <button type="button" class="btn btn-link" (click)="startCreate()">Cancelar</button>
+        </div>
+      }
+    </div>
+    <div class="card-body">
       <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
-        <label>
-          Nombre del perfil
-          <input type="text" formControlName="name" />
+        <div class="mb-3">
+          <label class="form-label">Nombre del perfil</label>
+          <input type="text" class="form-control" formControlName="name" />
           @if (form.controls.name.touched && form.controls.name.hasError('required')) {
-            <span class="field-error">El nombre es obligatorio.</span>
+            <div class="invalid-feedback d-block">El nombre es obligatorio.</div>
           }
-        </label>
+        </div>
 
-        <fieldset class="sections-fieldset">
-          <legend>Secciones permitidas</legend>
+        <div class="mb-3">
+          <label class="form-label">Secciones permitidas</label>
           @for (option of sectionOptions; track option.key) {
-            <label class="checkbox-row">
-              <input type="checkbox" [formControlName]="option.key" />
-              {{ option.label }}
+            <label class="form-check mb-1">
+              <input class="form-check-input" type="checkbox" [formControlName]="option.key" />
+              <span class="form-check-label">{{ option.label }}</span>
             </label>
           }
-        </fieldset>
+        </div>
 
-        <button type="submit" [disabled]="saving()">
+        <button type="submit" class="btn btn-primary w-100" [disabled]="saving()">
           {{ saving() ? 'Guardando…' : (editingProfile() ? 'Actualizar' : 'Crear perfil') }}
         </button>
       </form>
-    </article>
+    </div>
+  </div>
 
-    <article class="panel table-panel">
-      <div class="panel-header">
-        <h2>Listado</h2>
-        <p>{{ total() }} perfil(es)</p>
-      </div>
-
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title mb-0">Listado</h3>
+      <div class="card-actions text-secondary">{{ total() }} perfil(es)</div>
+    </div>
+    <div class="card-body p-0">
       @if (loading()) {
-        <p class="muted">Cargando perfiles…</p>
+        <div class="p-3 text-secondary">Cargando perfiles…</div>
       } @else if (profiles().length === 0) {
-        <p class="muted">No hay perfiles registrados todavía.</p>
+        <div class="empty">
+          <p class="empty-title">Sin perfiles</p>
+          <p class="empty-subtitle text-secondary">Define un rol para empezar.</p>
+        </div>
       } @else {
-        <div class="table-wrap">
-          <table>
+        <div class="table-responsive">
+          <table class="table table-vcenter card-table">
             <thead>
               <tr>
                 <th>Código</th>
                 <th>Nombre</th>
                 <th>Secciones</th>
-                <th>Acciones</th>
+                <th class="w-1">Acciones</th>
               </tr>
             </thead>
             <tbody>
               @for (profile of profiles(); track profile.id) {
                 <tr>
-                  <td>{{ profile.code }}</td>
+                  <td><code>{{ profile.code }}</code></td>
                   <td>{{ profile.name }}</td>
-                  <td>{{ formatSections(profile.section_keys) }}</td>
-                  <td class="actions">
-                    <button type="button" class="link" (click)="startEdit(profile)">Editar</button>
-                    <button type="button" class="link danger" (click)="remove(profile)">Eliminar</button>
+                  <td class="text-secondary">{{ formatSections(profile.section_keys) }}</td>
+                  <td>
+                    <div class="tap-actions">
+                      <button type="button" class="btn btn-sm btn-ghost-primary" (click)="startEdit(profile)">
+                        Editar
+                      </button>
+                      <button type="button" class="btn btn-sm btn-ghost-danger" (click)="remove(profile)">
+                        Eliminar
+                      </button>
+                    </div>
                   </td>
                 </tr>
               }
             </tbody>
           </table>
         </div>
-
-        <div class="pagination">
-          <button type="button" class="secondary" (click)="goToPage(currentPage() - 1)" [disabled]="currentPage() <= 1">
-            Anterior
-          </button>
-          <span>Página {{ currentPage() }} de {{ lastPage() }}</span>
-          <button
-            type="button"
-            class="secondary"
-            (click)="goToPage(currentPage() + 1)"
-            [disabled]="currentPage() >= lastPage()"
-          >
-            Siguiente
-          </button>
-        </div>
       }
-    </article>
+    </div>
+    @if (!loading() && profiles().length > 0) {
+      <div class="card-footer d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <button
+          type="button"
+          class="btn btn-outline-secondary btn-sm"
+          (click)="goToPage(currentPage() - 1)"
+          [disabled]="currentPage() <= 1"
+        >
+          Anterior
+        </button>
+        <span class="text-secondary small">Página {{ currentPage() }} de {{ lastPage() }}</span>
+        <button
+          type="button"
+          class="btn btn-outline-secondary btn-sm"
+          (click)="goToPage(currentPage() + 1)"
+          [disabled]="currentPage() >= lastPage()"
+        >
+          Siguiente
+        </button>
+      </div>
+    }
   </div>
-</section>
+</div>
