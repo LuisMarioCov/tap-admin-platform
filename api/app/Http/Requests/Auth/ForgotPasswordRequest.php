@@ -13,4 +13,12 @@ class ForgotPasswordRequest extends BaseFormRequest
             'email' => ['required', 'email', new ScalarString()],
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'email.required' => 'El correo es obligatorio.',
+            'email.email' => 'Escribe un correo válido (ejemplo: usuario@correo.com).',
+        ];
+    }
 }

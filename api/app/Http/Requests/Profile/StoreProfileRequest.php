@@ -16,4 +16,14 @@ class StoreProfileRequest extends BaseFormRequest
             'section_keys.*' => ['string'],
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'El nombre del perfil es obligatorio.',
+            'name.max' => 'El nombre no puede superar 120 caracteres.',
+            'section_keys.required' => 'Marca al menos una sección.',
+            'section_keys.min' => 'Marca al menos una sección.',
+        ];
+    }
 }

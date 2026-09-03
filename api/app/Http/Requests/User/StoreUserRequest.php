@@ -22,4 +22,27 @@ class StoreUserRequest extends BaseFormRequest
             'photo' => ['required', 'file', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'El nombre es obligatorio.',
+            'name.max' => 'El nombre no puede superar 120 caracteres.',
+            'email.required' => 'El correo es obligatorio.',
+            'email.email' => 'Escribe un correo válido (ejemplo: usuario@correo.com).',
+            'email.unique' => 'Ese correo ya está registrado.',
+            'password.required' => 'La contraseña es obligatoria.',
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres, con letras y números.',
+            'password.letters' => 'La contraseña debe incluir al menos una letra.',
+            'password.numbers' => 'La contraseña debe incluir al menos un número.',
+            'phone.max' => 'El teléfono no puede superar 20 caracteres.',
+            'country_code.max' => 'El código de país no puede superar 6 caracteres (ejemplo: +52).',
+            'profile_ids.required' => 'Selecciona al menos un perfil.',
+            'profile_ids.min' => 'Selecciona al menos un perfil.',
+            'photo.required' => 'La foto es obligatoria al crear un usuario.',
+            'photo.file' => 'Debes adjuntar un archivo de foto.',
+            'photo.mimes' => 'La foto debe ser JPG, PNG o WebP.',
+            'photo.max' => 'La foto excede 2 MB, archivo demasiado grande.',
+        ];
+    }
 }

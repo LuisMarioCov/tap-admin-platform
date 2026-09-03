@@ -16,4 +16,18 @@ class StoreProductRequest extends BaseFormRequest
             'price' => ['required', 'integer', 'min:1', 'max:999'],
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'El nombre es obligatorio.',
+            'name.max' => 'El nombre no puede superar 120 caracteres.',
+            'brand.required' => 'La marca es obligatoria.',
+            'brand.max' => 'La marca no puede superar 120 caracteres.',
+            'price.required' => 'El precio es obligatorio.',
+            'price.integer' => 'El precio debe ser un número entero, sin decimales.',
+            'price.min' => 'El precio mínimo es 1.',
+            'price.max' => 'El precio no puede ser mayor a 999.',
+        ];
+    }
 }

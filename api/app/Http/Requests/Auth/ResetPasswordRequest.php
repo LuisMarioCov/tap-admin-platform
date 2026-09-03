@@ -16,4 +16,18 @@ class ResetPasswordRequest extends BaseFormRequest
             'password' => ['required', 'confirmed', Password::min(8)->letters()->numbers()],
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'email.required' => 'El correo es obligatorio.',
+            'email.email' => 'Escribe un correo válido.',
+            'token.required' => 'Falta el token del enlace de recuperación.',
+            'password.required' => 'La nueva contraseña es obligatoria.',
+            'password.confirmed' => 'Las contraseñas no coinciden.',
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres, con letras y números.',
+            'password.letters' => 'La contraseña debe incluir al menos una letra.',
+            'password.numbers' => 'La contraseña debe incluir al menos un número.',
+        ];
+    }
 }

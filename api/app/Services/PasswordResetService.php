@@ -5,17 +5,18 @@ namespace App\Services;
 use App\Models\PasswordResetToken;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class PasswordResetService
 {
-    public function sendResetLink(string $email): void
+    public function sendResetLink(string $email): ?string
     {
         $user = User::query()->where('email', $email)->first();
 
         if ($user === null) {
-            return;
+            return null;
         }
 
         $plainToken = Str::random(64);
@@ -33,13 +34,21 @@ class PasswordResetService
             .'/auth/reset-password?token='.urlencode($plainToken)
             .'&email='.urlencode($email);
 
-        Mail::raw(
-            "Recibimos una solicitud para restablecer tu contraseña.\n\nEnlace (válido 60 min):\n{$resetUrl}",
-            function ($message) use ($email): void {
-                $message->to($email)
-                    ->subject('Restablecer contraseña — TAP Admin');
-            }
-        );
+        try {
+            Mail::raw(
+                "Recibimos una solicitud para restablecer tu contraseña.\n\nEnlace (válido 60 min):\n{$resetUrl}",
+                function ($message) use ($email): void {
+                    $message->to($email)
+                        ->subject('Restablecer contraseña — TAP Admin');
+                }
+            );
+        } catch (\Throwable $exception) {
+            Log::warning('Password reset mail failed.', ['email' => $email, 'error' => $exception->getMessage()]);
+        }
+
+        Log::info('Password reset link generated.', ['email' => $email, 'url' => $resetUrl]);
+
+        return $resetUrl;
     }
 
     public function resetPassword(string $email, string $token, string $password): bool

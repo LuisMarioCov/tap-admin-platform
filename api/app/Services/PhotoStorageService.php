@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use MongoDB\BSON\ObjectId;
 use MongoDB\GridFS\Bucket;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -20,8 +21,22 @@ class PhotoStorageService
 
     public function store(UploadedFile $file): string
     {
+        $path = $file->getRealPath();
+
+        if ($path === false || ! is_readable($path)) {
+            throw ValidationException::withMessages([
+                'photo' => ['No se pudo leer la foto. Usa JPG, PNG o WebP de máximo 2 MB.'],
+            ]);
+        }
+
         $bucket = $this->bucket();
-        $stream = fopen($file->getRealPath(), 'rb');
+        $stream = fopen($path, 'rb');
+
+        if ($stream === false) {
+            throw ValidationException::withMessages([
+                'photo' => ['No se pudo leer la foto. Usa JPG, PNG o WebP de máximo 2 MB.'],
+            ]);
+        }
 
         $id = $bucket->uploadFromStream(
             'user-photo-'.uniqid('', true).'.'.$file->getClientOriginalExtension(),
