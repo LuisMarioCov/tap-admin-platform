@@ -1,5 +1,7 @@
 .products-page {
+  width: 100%;
   max-width: 1100px;
+  min-width: 0;
 }
 
 .page-header {
@@ -8,6 +10,7 @@
   gap: 1rem;
   align-items: flex-start;
   margin-bottom: 1.25rem;
+  flex-wrap: wrap;
 }
 
 .eyebrow {
@@ -20,6 +23,7 @@
 
 h1 {
   margin: 0.35rem 0 0;
+  word-break: break-word;
 }
 
 .subtitle {
@@ -36,11 +40,12 @@ h1 {
 .layout {
   display: grid;
   gap: 1rem;
+  grid-template-columns: minmax(0, 1fr);
 }
 
 @media (min-width: 960px) {
   .layout {
-    grid-template-columns: 320px 1fr;
+    grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
     align-items: start;
   }
 }
@@ -50,6 +55,8 @@ h1 {
   border: 1px solid var(--line);
   border-radius: 1rem;
   background: var(--surface);
+  min-width: 0;
+  overflow: hidden;
 }
 
 .panel-header {
@@ -58,6 +65,7 @@ h1 {
   gap: 0.75rem;
   align-items: center;
   margin-bottom: 1rem;
+  flex-wrap: wrap;
 }
 
 .panel-header h2 {
@@ -74,6 +82,7 @@ h1 {
 form {
   display: grid;
   gap: 0.85rem;
+  min-width: 0;
 }
 
 label {
@@ -81,9 +90,12 @@ label {
   gap: 0.35rem;
   font-size: 0.9rem;
   font-weight: 600;
+  min-width: 0;
 }
 
 input {
+  width: 100%;
+  min-width: 0;
   padding: 0.7rem 0.8rem;
   border: 1px solid var(--line);
   border-radius: 0.6rem;
@@ -148,10 +160,12 @@ button:disabled {
 
 .table-wrap {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 table {
   width: 100%;
+  min-width: 480px;
   border-collapse: collapse;
 }
 
@@ -172,6 +186,7 @@ th {
 .actions {
   display: flex;
   gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
 .pagination {
@@ -180,6 +195,7 @@ th {
   align-items: center;
   gap: 0.75rem;
   margin-top: 1rem;
+  flex-wrap: wrap;
 }
 
 .muted {

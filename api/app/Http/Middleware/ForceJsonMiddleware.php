@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ForceJsonMiddleware
 {
+    /** API writes must be JSON or multipart (user photo). Blocks odd content-types. */
     public function handle(Request $request, Closure $next): Response
     {
         if ($request->is('api/*') && ! $request->is('api/users/*/photo')) {

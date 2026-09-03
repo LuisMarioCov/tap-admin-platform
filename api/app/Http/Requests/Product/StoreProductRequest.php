@@ -7,6 +7,7 @@ use App\Rules\ScalarString;
 
 class StoreProductRequest extends BaseFormRequest
 {
+    /** Price cap is integer max:999, not ScalarString. */
     public function rules(): array
     {
         return [

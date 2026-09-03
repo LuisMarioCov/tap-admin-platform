@@ -6,6 +6,7 @@ use App\Models\Counter;
 
 class CodeGeneratorService
 {
+    /** Atomic Mongo counter: PRD-00001, USR-00001, PRF-00001. */
     public function next(string $prefix): string
     {
         $result = Counter::raw(function ($collection) use ($prefix) {

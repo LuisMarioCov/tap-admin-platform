@@ -1,60 +1,53 @@
 # TAP Admin Platform
 
-Examen TAP Terminal — Laravel 11 + Angular 19 + MongoDB.
+Laravel 11 + Angular 19 + MongoDB (examen TAP Terminal).
 
-## Estructura
+## Carpetas
 
-- `api/` — Backend Laravel 11 (Sanctum, MongoDB, RBAC por sección, bitácora)
-- `web/` — Frontend Angular 19
+- `api/` backend
+- `web/` frontend
+- `postman/TAP-Admin-API.postman_collection.json` colección Postman
 
-## Requisitos locales
+## Local
 
-- PHP 8.2+ con extensiones: `mongodb`, `zip`, `openssl`, `mbstring`
-- Composer
-- Node.js 20+
-- MongoDB (local o Atlas)
-
-### Comandos PHP en este PC (XAMPP)
+PHP 8.2 (`mongodb`, `zip`, `gd`), Composer, Node 20+, MongoDB.
 
 ```powershell
 $php = "C:\xampp\php\php.exe"
-$composer = "C:\xampp\php\composer.phar"
-```
 
-## API — arranque
-
-```powershell
 cd api
-copy .env.example .env   # si aplica
-# Editar MONGODB_URI y correo SMTP
-& C:\xampp\php\php.exe artisan db:seed
-& C:\xampp\php\php.exe artisan serve
-```
+copy .env.example .env
+# APP_KEY, MONGODB_URI, MONGODB_DATABASE
+& $php artisan key:generate
+& $php artisan db:seed
+& $php artisan serve
 
-API: http://localhost:8000
-
-### Usuarios seed
-
-| Email | Password | Acceso |
-|-------|----------|--------|
-| admin@tap.local | Admin123! | products, users, profiles |
-| operador@tap.local | Operador123! | solo products |
-
-## Web — arranque
-
-```powershell
-cd web
+cd ..\web
+npm install
 npm start
 ```
 
-App: http://localhost:4200
+API: http://127.0.0.1:8000  
+Web: http://localhost:4200
 
-## Deploy (plan)
+| Email | Password | Secciones |
+|-------|----------|-----------|
+| admin@tap.local | Admin123! | products, users, profiles |
+| operador@tap.local | Operador123! | products |
 
-- **Vercel** → Angular (`web/`)
-- **Render** → Laravel (`api/`)
-- **MongoDB Atlas M0** → base de datos
+Postman: Importar `postman/TAP-Admin-API.postman_collection.json`. Login admin guarda `token`. Operator + GET `/users` = 403.
 
-## Documentación
+## Deploy
 
-Ver `docs/` (SECURITY.md, DECISIONS.md — en progreso).
+- Web: Vercel (`web/`, `web/vercel.json`)
+- API: Render (`render.yaml`, rootDir `api/`)
+- DB: MongoDB Atlas
+
+En Vercel, `environment.prod.ts` apunta a la URL de Render. En Render: `MONGODB_URI`, `APP_KEY`, `FRONTEND_URL`, `CORS_ALLOWED_ORIGINS`.
+
+## Tests
+
+```powershell
+cd api
+& C:\xampp\php\php.exe artisan test
+```

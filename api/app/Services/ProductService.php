@@ -31,7 +31,7 @@ class ProductService
         return $product;
     }
 
-    /** @param array{name: string, brand: string, price: int} $data */
+    /** Assigns PRD-##### then writes an audit create row. */
     public function create(array $data): Product
     {
         $product = Product::query()->create([

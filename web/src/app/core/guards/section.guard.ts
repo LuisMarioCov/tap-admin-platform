@@ -4,6 +4,7 @@ import { map } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { SectionKey } from '../models/user.model';
 
+/** UX gate only. Real RBAC is EnsureUserHasSection on the API. */
 export const sectionGuard = (section: SectionKey): CanActivateFn => {
   return () => {
     const authService = inject(AuthService);

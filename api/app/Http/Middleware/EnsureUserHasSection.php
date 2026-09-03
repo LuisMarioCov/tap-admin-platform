@@ -6,6 +6,10 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * RBAC gate for a module key (products|users|profiles).
+ * 401 = no token/user; 403 = valid user without that section.
+ */
 class EnsureUserHasSection
 {
     public function handle(Request $request, Closure $next, string $section): Response

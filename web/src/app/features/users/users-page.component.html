@@ -1,0 +1,156 @@
+<section class="users-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Módulo</p>
+      <h1>Usuarios</h1>
+      <p class="subtitle">Cuentas, foto en GridFS y perfiles asignados (`profile_ids`).</p>
+    </div>
+
+    <div class="header-actions">
+      <button type="button" class="secondary" (click)="export('pdf')" [disabled]="exporting() !== null">
+        {{ exporting() === 'pdf' ? 'Exportando…' : 'Exportar PDF' }}
+      </button>
+      <button type="button" class="secondary" (click)="export('xlsx')" [disabled]="exporting() !== null">
+        {{ exporting() === 'xlsx' ? 'Exportando…' : 'Exportar Excel (.xlsx)' }}
+      </button>
+    </div>
+  </header>
+
+  @if (errorMessage()) {
+    <div class="alert error" role="alert">{{ errorMessage() }}</div>
+  }
+
+  @if (successMessage()) {
+    <div class="alert success" role="status">{{ successMessage() }}</div>
+  }
+
+  <div class="layout">
+    <article class="panel form-panel">
+      <div class="panel-header">
+        <h2>{{ editingUser() ? 'Editar usuario' : 'Nuevo usuario' }}</h2>
+        @if (editingUser()) {
+          <button type="button" class="link" (click)="startCreate()">Cancelar edición</button>
+        }
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <label>
+          Nombre
+          <input type="text" formControlName="name" />
+        </label>
+
+        <label>
+          Correo
+          <input type="email" formControlName="email" />
+        </label>
+
+        <label>
+          Contraseña {{ editingUser() ? '(opcional)' : '' }}
+          <input type="password" formControlName="password" autocomplete="new-password" />
+        </label>
+
+        <div class="row-2">
+          <label>
+            Código país
+            <input type="text" formControlName="country_code" />
+          </label>
+          <label>
+            Teléfono
+            <input type="text" formControlName="phone" />
+          </label>
+        </div>
+
+        <fieldset class="sections-fieldset">
+          <legend>Perfiles</legend>
+          @for (profile of profiles(); track profile.id) {
+            <label class="checkbox-row">
+              <input
+                type="checkbox"
+                [checked]="isProfileSelected(profile.id)"
+                (change)="toggleProfile(profile.id, $any($event.target).checked)"
+              />
+              {{ profile.name }}
+              <span class="hint-inline">({{ profile.section_keys.join(', ') }})</span>
+            </label>
+          }
+        </fieldset>
+
+        <label>
+          Foto {{ editingUser() ? '(opcional)' : '(obligatoria)' }}
+          <input type="file" accept="image/jpeg,image/png,image/webp" (change)="onPhotoSelected($event)" />
+          @if (selectedPhotoName()) {
+            <span class="hint-inline">Archivo: {{ selectedPhotoName() }}</span>
+          }
+        </label>
+
+        <button type="submit" [disabled]="saving()">
+          {{ saving() ? 'Guardando…' : (editingUser() ? 'Actualizar' : 'Crear usuario') }}
+        </button>
+      </form>
+    </article>
+
+    <article class="panel table-panel">
+      <div class="panel-header">
+        <h2>Listado</h2>
+        <p>{{ total() }} usuario(s)</p>
+      </div>
+
+      @if (loading()) {
+        <p class="muted">Cargando usuarios…</p>
+      } @else if (users().length === 0) {
+        <p class="muted">No hay usuarios registrados todavía.</p>
+      } @else {
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Foto</th>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Perfiles</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (user of users(); track user.id) {
+                <tr>
+                  <td>
+                    @if (photoPreviews()[user.id]; as preview) {
+                      <img [src]="preview" [alt]="user.name" class="avatar" />
+                    } @else {
+                      <span class="avatar placeholder">—</span>
+                    }
+                  </td>
+                  <td>{{ user.code }}</td>
+                  <td>{{ user.name }}</td>
+                  <td>{{ user.email }}</td>
+                  <td>{{ profileNames(user) }}</td>
+                  <td class="actions">
+                    <button type="button" class="link" (click)="startEdit(user)">Editar</button>
+                    <button type="button" class="link danger" (click)="remove(user)">Eliminar</button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="pagination">
+          <button type="button" class="secondary" (click)="goToPage(currentPage() - 1)" [disabled]="currentPage() <= 1">
+            Anterior
+          </button>
+          <span>Página {{ currentPage() }} de {{ lastPage() }}</span>
+          <button
+            type="button"
+            class="secondary"
+            (click)="goToPage(currentPage() + 1)"
+            [disabled]="currentPage() >= lastPage()"
+          >
+            Siguiente
+          </button>
+        </div>
+      }
+    </article>
+  </div>
+</section>

@@ -13,6 +13,8 @@ class AuthService
     ) {}
 
     /**
+     * Scalar email + password only. Wrong credentials return the same 422 message (no user enumeration).
+     *
      * @return array{token: string, user: User}
      */
     public function login(string $email, string $password): array

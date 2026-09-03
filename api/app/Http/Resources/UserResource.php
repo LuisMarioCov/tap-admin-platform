@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/** @mixin \App\Models\User */
+/** JSON for clients: password is never listed (also $hidden on the model). */
 class UserResource extends JsonResource
 {
     public function toArray(Request $request): array

@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Auth;
 class AuditLogger
 {
     /**
+     * Append-only audit row. Passwords are stripped by RedactsSensitiveFields.
+     * Create: $before is null. Update/delete: snapshot before vs after.
+     *
      * @param  array<string, mixed>|null  $before
      * @param  array<string, mixed>|null  $after
      */

@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
+// Auth is public except logout/me. Login is throttled (5/min) against brute force.
 Route::prefix('auth')->group(function (): void {
     Route::post('login', [AuthController::class, 'login'])
         ->middleware('throttle:login');
@@ -22,6 +23,7 @@ Route::prefix('auth')->group(function (): void {
     });
 });
 
+// Every module is fail-closed: Sanctum first, then section middleware.
 Route::middleware('auth:sanctum')->group(function (): void {
     Route::middleware('section:products')->group(function (): void {
         Route::get('products/export/{format}', [ProductController::class, 'export'])

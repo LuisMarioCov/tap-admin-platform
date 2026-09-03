@@ -1,4 +1,18 @@
-<div class="shell">
+<div class="shell" [class.menu-open]="menuOpen()">
+  <header class="mobile-bar">
+    <div>
+      <p class="eyebrow">TAP Terminal</p>
+      <strong>Panel admin</strong>
+    </div>
+    <button type="button" class="menu-toggle" (click)="toggleMenu()" [attr.aria-expanded]="menuOpen()">
+      {{ menuOpen() ? 'Cerrar' : 'Menú' }}
+    </button>
+  </header>
+
+  @if (menuOpen()) {
+    <button type="button" class="backdrop" aria-label="Cerrar menú" (click)="closeMenu()"></button>
+  }
+
   <aside class="sidebar">
     <div class="brand">
       <p class="eyebrow">TAP Terminal</p>
@@ -10,12 +24,13 @@
         routerLink="/inicio"
         routerLinkActive="active"
         [routerLinkActiveOptions]="{ exact: true }"
+        (click)="closeMenu()"
       >
         Inicio
       </a>
 
       @for (item of navItems(); track item.section) {
-        <a [routerLink]="item.route" routerLinkActive="active">
+        <a [routerLink]="item.route" routerLinkActive="active" (click)="closeMenu()">
           {{ item.label }}
         </a>
       }

@@ -7,6 +7,7 @@ import { LoginResponse, MessageResponse, User } from '../models/user.model';
 
 const TOKEN_STORAGE_KEY = 'tap_auth_token';
 
+/** Session: token in localStorage, user in memory. /auth/me may wrap the user in `data`. */
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly http = inject(HttpClient);
@@ -77,6 +78,21 @@ export class AuthService {
 
   redirectAfterLogin(): void {
     void this.router.navigate(['/inicio']);
+  }
+
+  forgotPassword(email: string): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(`${environment.apiUrl}/auth/forgot-password`, {
+      email,
+    });
+  }
+
+  resetPassword(email: string, token: string, password: string, passwordConfirmation: string): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(`${environment.apiUrl}/auth/reset-password`, {
+      email,
+      token,
+      password,
+      password_confirmation: passwordConfirmation,
+    });
   }
 
   private persistSession(token: string, user: User): void {

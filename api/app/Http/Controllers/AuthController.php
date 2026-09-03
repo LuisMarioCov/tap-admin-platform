@@ -16,6 +16,7 @@ class AuthController extends Controller
         private readonly AuthService $authService,
     ) {}
 
+    /** Returns Sanctum token + UserResource. Password never appears in JSON. */
     public function login(LoginRequest $request): JsonResponse
     {
         $result = $this->authService->login(

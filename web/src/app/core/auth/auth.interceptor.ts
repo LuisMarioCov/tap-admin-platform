@@ -2,6 +2,7 @@ import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { AuthService } from './auth.service';
 
+/** Attaches Sanctum Bearer token from localStorage on every HttpClient call. */
 export const authInterceptor: HttpInterceptorFn = (request, next) => {
   const token = inject(AuthService).getToken();
 

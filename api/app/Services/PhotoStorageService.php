@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class PhotoStorageService
 {
+    /** GridFS bucket in the same Mongo database as the collections. */
     private function bucket(): Bucket
     {
         $database = DB::connection('mongodb')->getMongoDB();

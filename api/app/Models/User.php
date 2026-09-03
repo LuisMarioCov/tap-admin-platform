@@ -49,7 +49,7 @@ class User extends Model implements AuthenticatableContract
         return in_array($sectionKey, $allowed, true);
     }
 
-    /** @return list<string> */
+    /** Union of section_keys from assigned profiles. Not stored on the user document. */
     public function allowedSections(): array
     {
         if (empty($this->profile_ids)) {
